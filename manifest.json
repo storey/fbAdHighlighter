@@ -3,7 +3,7 @@
 
   "name": "Facebook Ad Highlighter",
   "description": "Explicitly highlights sponsored posts (ads) in Facebook's news feed.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html",
@@ -12,7 +12,7 @@
   "content_scripts": [
     {
       "matches": ["https://www.facebook.com/*"],
-      "js": ["externalCode/jquery/jquery-1.12.4.min.js", "ad_remover.js"]
+      "js": ["externalCode/jquery/jquery-1.12.4.min.js", "locale_info.js", "ad_remover.js"]
     }
   ]
 }
