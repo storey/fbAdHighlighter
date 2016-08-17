@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------------------
  * Author: Grant Storey;
  * Written: 8/10/16
- * Last Updated: 8/15/16
+ * Last Updated: 8/17/16
  * Description: Highlights ads ("sponsored posts") in the Facebook news feed.
  * Version 0.1.1: Added support for different locales.
  * Dependencies: jquery, locale_info.js
@@ -11,6 +11,9 @@
 var VERBOSE = false;
 
 var TARGET_ID_START = "hyperfeed_story_id";
+
+// Stores whether we are in a non-english locale
+var NON_ENGLISH_LOCALE = false;
 
 // default to a list of "Sponsored" text for all known locales
 var textPossibilities = TEXT_POSSIBILITIES_DEFAULT;
@@ -29,6 +32,9 @@ function getLocale() {
     if (localeCode in LOCALE_MAP) {
       textPossibilities = [LOCALE_MAP[localeCode]];
     }
+    if (!((localeCode == "en_PI") || (localeCode == "en_US") || (localeCode == "en_UK"))) {
+      NON_ENGLISH_LOCALE = true;
+    }
   }
 }
 
@@ -36,6 +42,8 @@ function getLocale() {
 // idStart is a string that should be the start of the id of all divs
 // to examine.
 function removeAds(idStart) {
+  // used to store the captured, matching "sponsored" text.
+  var matchingText = "";
   // select all divs whose ids start with the given idStart and
   // then from that list select only those with the "sponsored" link inside
   // of them somewhere.
@@ -48,12 +56,14 @@ function removeAds(idStart) {
       // determined.
       var sponsoredTextLinks = childLinks.filter(
         function(index) {
-          // make sure we capture text added via the :before/:after + CSS content
+          // Make sure that text added dynamically via the CSS pseudoselectors
+          // :before and :after is included in the text checked.
           var before = window.getComputedStyle($(this).get(0),':before').getPropertyValue("content");
           var after = window.getComputedStyle($(this).get(0),':after').getPropertyValue("content");
           var text = $(this).text();
           var fullText = before + text + after;
           if (textPossibilities.indexOf(fullText) !== -1) {
+            matchingText = fullText;
             return true;
           } else {
             return false;
@@ -79,7 +89,8 @@ function removeAds(idStart) {
       return hasSponsoredLink && !alreadyCovered;
     }
   );
-  // If there are ads in the selection, add a cover with "THIS IS AN AD".
+  // If there are ads in the selection, add a cover with "THIS IS AN AD" and
+  // the "Sponsored" text in the given locale's language (if non-english).
   if (adDivs.length > 0) {
     if (VERBOSE) {
       console.log("New ad(s) loaded");
@@ -90,10 +101,17 @@ function removeAds(idStart) {
     prepend += "X";
     prepend += "</strong>";
     prepend += "</div>";
-    prepend += "<div style=\"width: 100%;text-align:center;\">"
+    prepend += "<div style=\"width: 100%;text-align:center;\">";
     prepend += "<span style=\"color: black; font-size:60px;\">";
     prepend += "THIS IS AN AD";
     prepend += "</span>";
+    // if we have "Sponsored" text in another language, add it below "THIS IS AN AD"
+    if (NON_ENGLISH_LOCALE && matchingText !== "") {
+      prepend += "<br/>"
+      prepend += "<span style=\"color: black; font-size:40px; background: rgba(255,255,255,.8);\">";
+      prepend += "(" + matchingText + ")";
+      prepend += "</span>";
+    }
     prepend += "</div>";
     prepend += "</div>";
     adDivs.each(function (i) {
