@@ -48,8 +48,12 @@ function removeAds(idStart) {
       // determined.
       var sponsoredTextLinks = childLinks.filter(
         function(index) {
+          // make sure we capture text added via the :before/:after + CSS content
+          var before = window.getComputedStyle($(this).get(0),':before').getPropertyValue("content");
+          var after = window.getComputedStyle($(this).get(0),':after').getPropertyValue("content");
           var text = $(this).text();
-          if (textPossibilities.indexOf(text) !== -1) {
+          var fullText = before + text + after;
+          if (textPossibilities.indexOf(fullText) !== -1) {
             return true;
           } else {
             return false;
