@@ -75,18 +75,31 @@ function removeAds(idStart) {
       return hasSponsoredLink && !alreadyCovered;
     }
   );
-  // If there are ads in the selection, ad the "THIS IS AN AD" cover.
+  // If there are ads in the selection, add a cover with "THIS IS AN AD".
   if (adDivs.length > 0) {
     if (VERBOSE) {
-      console.log("New ad loaded");
+      console.log("New ad(s) loaded");
     }
-
-    var prepend = "<div class=\"CITP_adBlockerCover\" style=\"height: 100%;position: absolute;width: 100%;background-color: rgba(255, 255, 255, 0.7);z-index: 100;text-align:center;\">";
+    var prepend = "<div class=\"CITP_adBlockerCover\" style=\"height: 100%;position: absolute;width: 100%;background-color: rgba(255, 255, 255, 0.7);z-index: 100; visibility: visible;\">";
+    prepend += "<div class=\"CITP_closeButton\" style=\"position: absolute; right: 5px; top: 5px; cursor: pointer; padding: 0px 3px; border: 1px solid black; border-radius: 5px;\">";
+    prepend += "<strong>";
+    prepend += "X";
+    prepend += "</strong>";
+    prepend += "</div>";
+    prepend += "<div style=\"width: 100%;text-align:center;\">"
     prepend += "<span style=\"color: black; font-size:60px;\">";
     prepend += "THIS IS AN AD";
     prepend += "</span>";
     prepend += "</div>";
-    adDivs.prepend(prepend);
+    prepend += "</div>";
+    adDivs.each(function (i) {
+      var myPrepend = prepend;
+      var container = $(this);
+      container.prepend(myPrepend);
+      container.find(".CITP_closeButton").on("click", function () {
+        container.find(".CITP_adBlockerCover").css("visibility", "hidden");
+      });
+    });
   }
   //*/
 }
