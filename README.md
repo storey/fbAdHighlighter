@@ -10,7 +10,7 @@ make visible even to users using adblock.
 
 ### v0.1.2
 - Added a "close" button to the highlighting overlay so users can interact with the ad if they wish.
-- Search for the "Sponsored" text inludes text added using the :before/:after pseudoselectors. 
+- Search for the "Sponsored" text includes text added using the :before/:after pseudoselectors.
 
 ### v0.1.1
 - Added support for all Facebook locales.
