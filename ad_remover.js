@@ -1,9 +1,8 @@
 /* ----------------------------------------------------------------------------------
  * Author: Grant Storey;
  * Written: 8/10/16
- * Last Updated: 8/17/16
+ * Last Updated: 8/18/16
  * Description: Highlights ads ("sponsored posts") in the Facebook news feed.
- * Version 0.1.1: Added support for different locales.
  * Dependencies: jquery, locale_info.js
  * ----------------------------------------------------------------------------------
  */
@@ -50,6 +49,13 @@ function removeAds(idStart) {
   var adDivs = $("div[id^="+idStart+"]").filter(
     function(index) {
 
+      // also make sure not to add the cover to an advertisement that already
+      // has the cover.
+      var alreadyCovered = ($(this).find(".CITP_adBlockerCover").length > 0);
+      if (alreadyCovered) {
+        return false;
+      }
+
       var childLinks = $(this).find("a");
       // select only links whose text matches the "Sponsored" text for this
       // locale, or the text for any locale if no individual locale has been
@@ -82,11 +88,7 @@ function removeAds(idStart) {
       // if the div has either the sponsored text or a link to the ads page
       var hasSponsoredLink = (sponsoredTextLinks.length > 0) || (adPageLinks.length > 0);
 
-      // also make sure not to add the cover to an advertisement that already
-      // has the cover.
-      var alreadyCovered = ($(this).find(".CITP_adBlockerCover").length > 0);
-
-      return hasSponsoredLink && !alreadyCovered;
+      return hasSponsoredLink;
     }
   );
   // If there are ads in the selection, add a cover with "THIS IS AN AD" and
@@ -142,13 +144,17 @@ var observer = new MutationObserver(function(mutations) {
     // if content was added, examine the ads and look for new information
     if (mutation.addedNodes.length > 0) {
       var targetString = TARGET_ID_START;
-      var newID = mutation.target.id;
       var addedNewsfeedItem = (mutation.target.id && (mutation.target.id.substring(0, targetString.length) === targetString));
       if (addedNewsfeedItem) {
-        // when a new newsfeed item is added, determine whether it is an ad
-        // and, if so, cover it. This allows us to only run the checks on
-        // the newly added newsfeed divs rather than all newsfeed divs visible.
-        removeAds(newID);
+        // when a new newsfeed item is added, run through all items on the
+        // page and highlight them if they are an ad. There appears to be a
+        // glitch where the ads loaded when the user first opens the page are
+        // not recognized if ads are only checked on a case-by-case basis as
+        // they are added (for some but not all users). If one really wanted to
+        // optimize this calculation, it would probably be better to check the
+        // items individually as they were added and figure out a different fix
+        // for recognizing the ads that are sometimes missed on load.
+        removeAds(TARGET_ID_START);
       }
     }
   });

@@ -8,6 +8,9 @@ make visible even to users using adblock.
 
 # Update History
 
+### v0.1.4
+- Fixed a glitch where the first sponsored post was not recognized.
+
 ### v0.1.3
 - Fixed a small bug that prevented detection of the new ads with "Sponsored" based on pseudoselectors
 
