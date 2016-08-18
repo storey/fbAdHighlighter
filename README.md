@@ -1,4 +1,4 @@
-# Facebook Ad Highlighter Chrome Extension v0.1.2
+# Facebook Ad Highlighter Chrome Extension
 
 This extension highlights Facebook advertisements in a user’s news feed.
 
