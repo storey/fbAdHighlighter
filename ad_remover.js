@@ -58,8 +58,8 @@ function removeAds(idStart) {
         function(index) {
           // Make sure that text added dynamically via the CSS pseudoselectors
           // :before and :after is included in the text checked.
-          var before = window.getComputedStyle($(this).get(0),':before').getPropertyValue("content");
-          var after = window.getComputedStyle($(this).get(0),':after').getPropertyValue("content");
+          var before = window.getComputedStyle($(this).get(0),':before').getPropertyValue("content").replace(/\"/g, "");
+          var after = window.getComputedStyle($(this).get(0),':after').getPropertyValue("content").replace(/\"/g, "");
           var text = $(this).text();
           var fullText = before + text + after;
           if (textPossibilities.indexOf(fullText) !== -1) {
